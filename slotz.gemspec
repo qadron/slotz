@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
     s.files            += Dir.glob( 'logs/**/**' )
     s.files            += Dir.glob( 'components/**/**' )
     s.files            += Dir.glob( 'spec/**/**' )
-    s.files            += %w(Gemfile Rakefile slotz.gemspec)
+    s.files            += %w(Gemfile slotz.gemspec)
     s.test_files        = Dir.glob( 'spec/**/**' )
 
-    s.extra_rdoc_files  = %w(README.md LICENSE.md CHANGELOG.md)
+    s.extra_rdoc_files  = %w(README.md LICENSE.md)
 
     s.rdoc_options      = [ '--charset=UTF-8' ]
 
