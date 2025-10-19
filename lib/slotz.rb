@@ -16,17 +16,18 @@ module Slotz
         [disk, memory].max
     end
 
-    def self.filter( reservation )
-        # fail 'Max utilization.' if Slotz::System.max_utilization?
+    def self.filter( klass, provisions )
+        disk   = provisions[:disk]
+        memory = provisions[:memory]
 
-        if reservation.disk <= RESERVED[:disk] + System.disk_space_free
-            RESERVED[:disk] += reservation.disk
+        if RESERVED[:disk].to_i + disk.to_i <= System.disk_space_free.to_i
+            RESERVED[:disk] += disk.to_i
         else
             fail 'Not enough disk resources.'
         end
 
-        if reservation.memory <= RESERVED[:memory] + System.memory_free
-            RESERVED[:memory] += reservation.memory
+        if RESERVED[:memory].to_i + memory.to_i <= System.memory_free.to_i
+            RESERVED[:memory] += memory.to_i
         else
             fail 'Not enough memory resources.'
         end
