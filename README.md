@@ -12,21 +12,32 @@ You can stop allocating applications once you get an exception indicating insuff
 require 'slotz'
 
 class MyApp
-    # Each instantiation must pass this reservation.
-    include Slotz::Reservation.new(
-      disk:   1 * 1_000_000_000,
-      memory: 2 * 1_000_000_000
-    )
+    # Add system accounting capabilities.
+    include Slotz::Reservation
+
+    def initialize
+        super
+
+        # Each instantiation must pass this reservation.
+        provision(
+          disk:   1 * 1_000_000_000, # bytes
+          memory: 5 * 1_000_000_000 # bytes
+        )
+    end
+
 end
 
 my_app = MyApp.new
 
-p my_app.class.available_slots
-#=> 27
+p my_app.available_slots
+#=> 11
 
-p my_app.class.available_slots_on_disk
+p my_app.available_slots_on_disk
 #=> 1425
 
-p my_app.class.available_slots_in_memory
-#=> 27
+p my_app.available_slots_in_memory
+#=> 11
+
+p Slotz.utilization
+#=> 0.08933773478082488 %
 ```
