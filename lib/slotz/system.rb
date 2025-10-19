@@ -32,35 +32,35 @@ class System
 
     def initialize
         @platforms = []
-        @pids      = Set.new
-    end
-
-    def use( pid )
-        @pids << pid
-        pid
     end
 
     # @return   [Integer]
     #   Amount of new applications that can be safely run in parallel, currently.
     #   User option will override decision based on system resources.
-    def available
+    def available( application )
         # Manual mode, user gave us a value.
         if (max_slots = System.max_slots)
             max_slots - used
 
         # Auto-mode, pick the safest restriction, RAM vs CPU.
         else
-            available_auto
+            available_auto( application )
         end
     end
 
     # @return   [Integer]
     #   Amount of new applications that can be safely run in parallel, currently.
     #   The decision is based on the available resources alone.
-    def available_auto( requirements )
-        [ available_in_memory( requirements[:memory] ),
-          available_in_cpu( requirements[:cores] ),
-          available_in_disk( requirements[:disk] ) ].min
+    def available_auto( application )
+        memory_slots = available_in_memory( application.memory )
+        # cpu_slots    = available_in_cpu( application.cpu_requirement )
+        disk_slots   = unallocated_disk_space / application.disk
+
+        [
+            memory_slots,
+            # cpu_slots,
+            disk_slots
+        ].min
     end
 
     # @return   [Integer]
@@ -95,30 +95,13 @@ class System
     #   Well, they may not be really available, other stuff on the machine could
     #   be using them to a considerable extent, but we can only do so much.
     def available_in_cpu( cores )
-        @system.cpu_count - used
-    end
-
-    # @param    [Integer]   pid
-    #
-    # @return   [Integer]
-    #   Remaining memory for the scan, in bytes.
-    def remaining_memory_for( pid )
-        [memory_size - @system.memory_for_process_group( pid ), 0].max
+        cpu_count - used
     end
 
     # @return   [Integer]
     #   Amount of memory (in bytes) available for future scans.
     def unallocated_memory
-        # Available memory right now.
-        available_mem = @system.memory_free
-
-        # Remove allocated memory to figure out how much we can really spare.
-        @pids.each do |pid|
-            # Mark the remaining allocated memory as unavailable.
-            available_mem -= remaining_memory_for( pid )
-        end
-
-        available_mem
+         memory_free
     end
 
     # @param    [Integer]   pid
@@ -133,40 +116,13 @@ class System
     #   Amount of disk space (in bytes) available for future scans.
     def unallocated_disk_space
         # Available space right now.
-        available_space = @system.disk_space_free
-
-        # # Remove allocated space to figure out how much we can really spare.
-        # @pids.each do |pid|
-        #     # Mark the remaining allocated space as unavailable.
-        #     available_space -= remaining_disk_space_for( pid )
-        # end
-
-        available_space
-    end
-
-    def disk_space_requirement( application )
-        application.disk.to_i
-    end
-
-    # @return   [Fixnum]
-    #   Amount of memory (in bytes) to allocate.
-    def memory_requirement( application )
-        application.memory.to_i
+        disk_space_free
     end
 
     # @return   [Integer]
     #   Amount of free RAM in bytes.
     def memory_free
         platform.memory_free
-    end
-
-    # @param    [Integer]   pgid
-    #   Process group ID.
-    #
-    # @return   [Integer]
-    #   Amount of RAM in bytes used by the given GPID.
-    def memory_for_process_group( pgid )
-        platform.memory_for_process_group( pgid )
     end
 
     # @return   [Integer]
@@ -216,7 +172,6 @@ class System
 
     # @private
     def reset
-        @pids.clear
         @cpu_count = nil
         @platform  = nil
     end
