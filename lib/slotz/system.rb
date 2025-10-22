@@ -1,4 +1,5 @@
 require_relative 'system/platforms/base'
+require_relative 'system/spawner'
 require 'singleton'
 require 'set'
 

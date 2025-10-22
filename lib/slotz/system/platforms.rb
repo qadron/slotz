@@ -7,6 +7,6 @@ end
 end
 end
 
-Dir.glob( "#{File.dirname(__FILE__)}/**/*.rb" ).each do |platform|
+Dir.glob( "#{File.dirname(__FILE__)}/platforms/**/*.rb" ).each do |platform|
     require platform
 end
