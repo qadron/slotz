@@ -16,9 +16,10 @@ module Slotz
         [disk, memory].max
     end
 
-    def self.filter( klass, provisions )
-        disk   = provisions[:disk]
-        memory = provisions[:memory]
+    def self.filter( klass )
+        klass.disk   = disk   = klass::SLOTZ_PROVISIONS[:disk]
+        klass.memory = memory = klass::SLOTZ_PROVISIONS[:memory]
+        # klass.cores = cores = klass::SLOTZ_PROVISIONS[:cores]
 
         if RESERVED[:disk].to_i + disk.to_i <= System.disk_space_free.to_i
             RESERVED[:disk] += disk.to_i
@@ -32,11 +33,17 @@ module Slotz
             fail 'Not enough memory resources.'
         end
 
-        # if RESERVED[:cores] + requirements[:cores] <= System.cores
-        #     RESERVED[:cores]  += requirements[:cores]
+        # if RESERVED[:cores].to_i + cores.to_i <= System.cores.to_i
+        #     RESERVED[:cores] += cores.to_i
         # else
-        #     fail 'Not enough CPU resources.'
+        #     fail 'Not enough memory resources.'
         # end
+
+        ObjectSpace.define_finalizer(klass, proc {
+            Slotz::RESERVED[:disk]   -= klass.disk
+            Slotz::RESERVED[:memory] -= klass.memory
+            # Slotz::RESERVED[:cores]  -= klass.cores
+        })
     end
 
 end

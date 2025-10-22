@@ -16,7 +16,9 @@ class Spawner
     #
     # @return   [Integer]
     #   PID of the process.
-    def spawn( executable, options = {} )
+    def spawn( klass, executable, options = {} )
+        Slotz.filter klass
+
         stdin      = options.delete(:stdin)
         stdout     = options.delete(:stdout)
         stderr     = options.delete(:stderr)

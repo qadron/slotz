@@ -3,38 +3,23 @@ module Slotz
 module Reservation
 
     def included( base )
-
         base.class_eval do
+            self.class.attr_accessor :disk
+            self.class.attr_accessor :memory
+            self.class.attr_accessor :cores
 
-            attr_reader :disk
-            attr_reader :memory
-            attr_reader :cores
-
-            def provision( provisions )
-                @provisions = provisions
-                @disk   = @provisions[:disk]
-                @memory = @provisions[:memory]
-                @cores  = @provisions[:cores]
-
-                Slotz.filter self, @provisions
-
-                ObjectSpace.define_finalizer(self, proc {
-                    Slotz::RESERVED[:disk]   -= self.class.disk
-                    Slotz::RESERVED[:memory] -= self.class.memory
-                    Slotz::RESERVED[:cores]  -= self.class.cores
-                })
-            end
+            Slotz.filter base
 
             def available_slots
                 System.available_auto self
             end
 
             def available_slots_on_disk
-                System.disk_space_free / disk
+                System.disk_space_free / self.class.disk
             end
 
             def available_slots_in_memory
-                System.memory_free / memory
+                System.memory_free / self.class.memory
             end
 
         end
