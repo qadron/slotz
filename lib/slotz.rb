@@ -17,6 +17,10 @@ module Slotz
     end
 
     def self.filter( klass )
+        if !klass.is_a?( Class ) && !klass.is_a?( Module )
+            klass = Object.const_get( klass.to_s )
+        end
+
         klass.disk   = disk   = klass::SLOTZ_PROVISIONS[:disk]
         klass.memory = memory = klass::SLOTZ_PROVISIONS[:memory]
         # klass.cores = cores = klass::SLOTZ_PROVISIONS[:cores]
