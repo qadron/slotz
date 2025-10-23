@@ -6,6 +6,8 @@ class Spawner
     RUNNER = "#{File.dirname( __FILE__ )}/spawner/runner.rb"
 
     def initialize
+        # Monitor pids to adjust slotz utilization, fool finalizer to account for dead pids.
+        @pids = {}
     end
 
     # @param    [String]    executable
@@ -17,6 +19,11 @@ class Spawner
     # @return   [Integer]
     #   PID of the process.
     def spawn( klass, executable, options = {} )
+        if !File.exist? executable
+            fail "File does not exist: #{executable}"
+        end
+
+        require_relative executable
         Slotz.filter klass
 
         stdin      = options.delete(:stdin)
@@ -40,7 +47,6 @@ class Spawner
 
         encoded_options = Base64.strict_encode64( Marshal.dump( options ) )
         argv            = [executable, encoded_options]
-
 
         # It's very, **VERY** important that we use this argument format as
         # it bypasses the OS shell and we can thus count on a 1-to-1 process
