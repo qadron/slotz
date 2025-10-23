@@ -8,7 +8,10 @@ module Reservation
             self.class.attr_accessor :memory
             self.class.attr_accessor :cores
 
-            Slotz.filter base
+            def initialize
+                super
+                Slotz.filter self.class
+            end
 
             def available_slots
                 System.available_auto self
