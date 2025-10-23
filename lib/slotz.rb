@@ -21,9 +21,8 @@ module Slotz
             klass = Object.const_get( klass.to_s )
         end
 
-        klass.disk   = disk   = klass::SLOTZ_PROVISIONS[:disk]
-        klass.memory = memory = klass::SLOTZ_PROVISIONS[:memory]
-        # klass.cores = cores = klass::SLOTZ_PROVISIONS[:cores]
+        disk   = klass.disk
+        memory = klass.memory
 
         if RESERVED[:disk].to_i + disk.to_i <= System.disk_space_free.to_i
             RESERVED[:disk] += disk.to_i
