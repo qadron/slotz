@@ -16,4 +16,7 @@ group :prof do
     gem 'memory_profiler'
 end
 
+gem 'msgpack'
+gem 'toq'
+
 gemspec
