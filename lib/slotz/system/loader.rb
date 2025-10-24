@@ -1,9 +1,9 @@
 require 'base64'
 
 module Slotz
-class Spawner
+class Loader
 
-    RUNNER = "#{File.dirname( __FILE__ )}/spawner/runner.rb"
+    RUNNER = "#{File.dirname( __FILE__ )}/loader/base.rb"
 
     def initialize
         # Monitor pids to adjust slotz utilization, fool finalizer to account for dead pids.
@@ -18,7 +18,7 @@ class Spawner
     #
     # @return   [Integer]
     #   PID of the process.
-    def spawn( klass, executable, options = {} )
+    def load( klass, executable, options = {} )
         if !File.exist? executable
             fail "File does not exist: #{executable}"
         end
