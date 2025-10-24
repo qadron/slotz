@@ -14,14 +14,12 @@ class Loader
                     begin
                         result = Process.waitpid( pid, Process::WNOHANG )
                         if result
-                            info = @pids.delete pid
-                            klass = info[:klass]
+                            @pids.delete pid
                             Slotz::RESERVED[:disk]   -= resources[:disk]
                             Slotz::RESERVED[:memory] -= resources[:klass.memory]
                         end
                     rescue Errno::ECHILD
-                        info = @pids.delete pid
-                        klass = info[:klass]
+                        @pids.delete pid
                         Slotz::RESERVED[:disk]   -= resources[:disk]
                         Slotz::RESERVED[:memory] -= resources[:memory]
                     end
@@ -39,11 +37,13 @@ class Loader
     # @return   [Integer]
     #   PID of the process.
     def load( klass, executable, options = {} )
-        if !File.exist? executable
+        if !File.exist?( executable )
             fail "File does not exist: #{executable}"
         end
+        executable = File.absolute_path( executable )
 
         require_relative executable
+        klass     = Object.const_get( klass )
         resources = Slotz.filter( klass )
 
         stdin      = options.delete(:stdin)
