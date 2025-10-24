@@ -6,26 +6,24 @@ class Loader
     RUNNER = "#{File.dirname( __FILE__ )}/loader/base.rb"
 
     def initialize
-        # Monitor pids to adjust slotz utilization, fool finalizer to account for dead pids.
         @pids = {}
-
-        @t = Thread.new do
+        @t    = Thread.new do
             loop do
                 sleep 1
-                @pids.each_key do |pid|
+                @pids.each do |pid, resources|
                     begin
                         result = Process.waitpid( pid, Process::WNOHANG )
                         if result
                             info = @pids.delete pid
                             klass = info[:klass]
-                            Slotz::RESERVED[:disk]   -= klass.disk
-                            Slotz::RESERVED[:memory] -= klass.memory
+                            Slotz::RESERVED[:disk]   -= resources[:disk]
+                            Slotz::RESERVED[:memory] -= resources[:klass.memory]
                         end
                     rescue Errno::ECHILD
                         info = @pids.delete pid
                         klass = info[:klass]
-                        Slotz::RESERVED[:disk]   -= klass.disk
-                        Slotz::RESERVED[:memory] -= klass.memory
+                        Slotz::RESERVED[:disk]   -= resources[:disk]
+                        Slotz::RESERVED[:memory] -= resources[:memory]
                     end
                 end
             end
@@ -90,9 +88,6 @@ class Loader
         if !daemonize
             begin
                 Process.waitpid( pid )
-            rescue Errno::ECHILD
-                @pids.delete pid
-                return
             rescue Interrupt
                 exit 0
             end
