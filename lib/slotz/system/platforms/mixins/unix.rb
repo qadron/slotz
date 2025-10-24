@@ -1,4 +1,5 @@
 require 'vmstat'
+require_relative '../base'
 
 module Slotz
 class System

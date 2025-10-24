@@ -1,5 +1,3 @@
-require_relative 'system/platforms/base'
-require_relative 'system/loader'
 require 'singleton'
 require 'set'
 

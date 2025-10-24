@@ -2,6 +2,7 @@ module Slotz
     require_relative 'slotz/version'
     require_relative 'slotz/options'
     require_relative 'slotz/system'
+    require_relative 'slotz/loader'
     require_relative 'slotz/reservation'
 
     RESERVED = {
