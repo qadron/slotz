@@ -77,6 +77,8 @@ This can be the file you wish to load:
 
 ```ruby
 p $options # Pre-set options.
+# => {:my=>:option, :ppid=>3407092, :tmpdir=>"/tmp"}
+
 class Child
     Slotz::Reservation.provision( 
         self,
@@ -93,5 +95,5 @@ end
 require 'slotz'
 
 loader = Slotz::Loader.new
-loader.load( 'Child', "tmp/test/child.rb" )
+loader.load( 'Child', "tmp/test/child.rb", { my: :option } )
 ```
