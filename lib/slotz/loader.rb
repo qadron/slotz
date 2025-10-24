@@ -8,6 +8,28 @@ class Loader
     def initialize
         # Monitor pids to adjust slotz utilization, fool finalizer to account for dead pids.
         @pids = {}
+
+        @t = Thread.new do
+            loop do
+                sleep 1
+                @pids.each_key do |pid|
+                    begin
+                        result = Process.waitpid( pid, Process::WNOHANG )
+                        if result
+                            info = @pids.delete pid
+                            klass = info[:klass]
+                            Slotz::RESERVED[:disk]   -= klass.disk
+                            Slotz::RESERVED[:memory] -= klass.memory
+                        end
+                    rescue Errno::ECHILD
+                        info = @pids.delete pid
+                        klass = info[:klass]
+                        Slotz::RESERVED[:disk]   -= klass.disk
+                        Slotz::RESERVED[:memory] -= klass.memory
+                    end
+                end
+            end
+        end
     end
 
     # @param    [String]    executable
@@ -24,7 +46,7 @@ class Loader
         end
 
         require_relative executable
-        Slotz.filter klass
+        resources = Slotz.filter( klass )
 
         stdin      = options.delete(:stdin)
         stdout     = options.delete(:stdout)
@@ -59,6 +81,11 @@ class Loader
           RUNNER,
           *(argv + [spawn_options])
         )
+
+        @pids[pid] = {
+            klass:     klass,
+            resources: resources
+        }
 
         if !daemonize
             begin

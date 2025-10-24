@@ -48,6 +48,12 @@ module Slotz
             Slotz::RESERVED[:memory] -= klass.memory
             # Slotz::RESERVED[:cores]  -= klass.cores
         })
+
+        {
+            disk:   disk,
+            memory: memory
+            # cores:  0
+        }
     end
 
 end
