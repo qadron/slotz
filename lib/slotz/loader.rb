@@ -16,12 +16,16 @@ class Loader
                         if result
                             @pids.delete pid
                             resources = info[:resources]
+                            next if !resources
+
                             Slotz::RESERVED[:disk]   -= resources[:disk]
                             Slotz::RESERVED[:memory] -= resources[:klass.memory]
                         end
                     rescue Errno::ECHILD
                         @pids.delete( pid )
                         resources = info[:resources]
+                        next if !resources
+
                         Slotz::RESERVED[:disk]   -= resources[:disk]
                         Slotz::RESERVED[:memory] -= resources[:memory]
                     end

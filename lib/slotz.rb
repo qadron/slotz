@@ -22,6 +22,8 @@ module Slotz
             klass = Object.const_get( klass.to_s )
         end
 
+        return if !klass.respond_to?(:disk) || !klass.respond_to?(:memory)
+
         disk   = klass.disk
         memory = klass.memory
 

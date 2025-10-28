@@ -86,7 +86,11 @@ class Child
         memory: 5 * 1_000_000_000
     )
 end
+# Just load for the inside view. don't run anything.
+exit if $options.nil?
 
+# Load everything to run. 
+# [...]
 
 ```
 
