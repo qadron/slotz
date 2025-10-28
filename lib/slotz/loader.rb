@@ -48,11 +48,10 @@ class Loader
         end
         executable = File.absolute_path( executable )
 
-        $slotz_execute = false
+        $options = { execute: false }
         require_relative executable
         klass     = Object.const_get( klass )
         resources = Slotz.filter( klass )
-        $slotz_execute = nil
 
         stdin      = options.delete(:stdin)
         stdout     = options.delete(:stdout)
@@ -73,7 +72,7 @@ class Loader
         options[:ppid]   = Process.pid
         options[:tmpdir] = Dir.tmpdir
 
-        encoded_options = Base64.strict_encode64( Marshal.dump( options.merge( slotz_execute: true ) ) )
+        encoded_options = Base64.strict_encode64( Marshal.dump( options.merge( execute: true ) ) )
         argv            = [executable, encoded_options]
 
         # It's very, **VERY** important that we use this argument format as

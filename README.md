@@ -77,21 +77,21 @@ This can be the file you wish to load:
 
 ```ruby
 p $options # Pre-set options.
-# => {:my=>:option, :ppid=>3407092, :tmpdir=>"/tmp"}
+#=> {:execute=>false}
 
 class Child
-    Slotz::Reservation.provision( 
-        self,
-        disk:   1 * 1_000_000_000,
-        memory: 5 * 1_000_000_000
+    Slotz::Reservation.provision(
+      self,
+      disk:   1 * 1_000_000_000,
+      memory: 5 * 1_000_000_000
     )
 end
+
 # Just load for the inside view. don't run anything, unless you've been instructed to.
-exit unless $slotz_execute
+exit unless $execute
 
-# Load everything to run. 
+# Load everything to run.
 # [...]
-
 ```
 
 ### `loader.rb:`
@@ -99,5 +99,6 @@ exit unless $slotz_execute
 require 'slotz'
 
 loader = Slotz::Loader.new
-loader.load( 'Child', "tmp/test/child.rb", { my: :option } )
+loader.load( 'Child', "tmp/test2/child.rb", { my: :option } )
+
 ```
