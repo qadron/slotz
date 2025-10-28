@@ -71,7 +71,7 @@ class Loader
         options[:ppid]   = Process.pid
         options[:tmpdir] = Dir.tmpdir
 
-        encoded_options = Base64.strict_encode64( Marshal.dump( options ) )
+        encoded_options = Base64.strict_encode64( Marshal.dump( options.merge( slotz_load: true ) ) )
         argv            = [executable, encoded_options]
 
         # It's very, **VERY** important that we use this argument format as
