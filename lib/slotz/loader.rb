@@ -10,16 +10,18 @@ class Loader
         @t    = Thread.new do
             loop do
                 sleep 1
-                @pids.each do |pid, resources|
+                @pids.each do |pid, info|
                     begin
                         result = Process.waitpid( pid, Process::WNOHANG )
                         if result
                             @pids.delete pid
+                            resources = info[:resources]
                             Slotz::RESERVED[:disk]   -= resources[:disk]
                             Slotz::RESERVED[:memory] -= resources[:klass.memory]
                         end
                     rescue Errno::ECHILD
-                        @pids.delete pid
+                        @pids.delete( pid )
+                        resources = info[:resources]
                         Slotz::RESERVED[:disk]   -= resources[:disk]
                         Slotz::RESERVED[:memory] -= resources[:memory]
                     end
