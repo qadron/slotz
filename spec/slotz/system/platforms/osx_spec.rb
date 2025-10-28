@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'slotz/system'
 
 describe Slotz::System::Platforms::OSX do
     it_should_behave_like 'Slotz::System::Platforms::Mixins::Unix'

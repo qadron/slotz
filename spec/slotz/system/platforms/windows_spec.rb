@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'slotz/system'
 
 describe Slotz::System::Platforms::Windows, if: Slotz::System.windows? do
     it_should_behave_like 'Slotz::System::Platforms::Base'

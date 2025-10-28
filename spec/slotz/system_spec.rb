@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'slotz/system'
 
 describe Slotz::System do
     subject { described_class.instance }
