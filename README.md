@@ -77,7 +77,8 @@ This can be the file you wish to load:
 
 ```ruby
 p $options # Pre-set options.
-#=> {:execute=>false}
+# => {:execute=>false}
+# => {:my=>:option, :ppid=>3158249, :tmpdir=>"/tmp", :execute=>true}
 
 class Child
     Slotz::Reservation.provision(
@@ -88,7 +89,7 @@ class Child
 end
 
 # Just load for the inside view. don't run anything, unless you've been instructed to.
-exit unless $execute
+return unless $execute
 
 # Load everything to run.
 # [...]
