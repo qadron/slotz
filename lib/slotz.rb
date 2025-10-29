@@ -22,10 +22,10 @@ module Slotz
             klass = Object.const_get( klass.to_s )
         end
 
-        return if !klass.respond_to?(:disk) || !klass.respond_to?(:memory)
+        return if !klass.respond_to?(:_slotz_disk) || !klass.respond_to?(:_slotz_memory)
 
-        disk   = klass.disk
-        memory = klass.memory
+        disk   = klass._slotz_disk
+        memory = klass._slotz_memory
 
         if RESERVED[:disk].to_i + disk.to_i <= System.disk_space_free.to_i
             RESERVED[:disk] += disk.to_i
@@ -46,9 +46,9 @@ module Slotz
         # end
 
         ObjectSpace.define_finalizer(klass, proc {
-            Slotz::RESERVED[:disk]   -= klass.disk
-            Slotz::RESERVED[:memory] -= klass.memory
-            # Slotz::RESERVED[:cores]  -= klass.cores
+            Slotz::RESERVED[:disk]   -= klass._slotz_disk
+            Slotz::RESERVED[:memory] -= klass._slotz_memory
+            # Slotz::RESERVED[:cores]  -= klass._slotz_cores
         })
 
         {

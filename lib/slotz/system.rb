@@ -51,9 +51,9 @@ class System
     #   Amount of new applications that can be safely run in parallel, currently.
     #   The decision is based on the available resources alone.
     def available_auto( application )
-        memory_slots = available_in_memory( application.class.memory )
+        memory_slots = available_in_memory( application.class._slotz_memory )
         # cpu_slots    = available_in_cpu( application.cpu_requirement )
-        disk_slots   = unallocated_disk_space / application.class.disk
+        disk_slots   = unallocated_disk_space / application.class._slotz_disk
 
         [
             memory_slots,

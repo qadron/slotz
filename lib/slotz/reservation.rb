@@ -4,9 +4,9 @@ module Reservation
 
     def provision( base, resources )
         base.class_eval do
-            self.class.attr_accessor :disk
-            self.class.attr_accessor :memory
-            self.class.attr_accessor :cores
+            self.class.attr_accessor :_slotz_disk
+            self.class.attr_accessor :_slotz_memory
+            self.class.attr_accessor :_slotz_cores
 
             def initialize(*)
                 super
@@ -18,16 +18,16 @@ module Reservation
             end
 
             def available_slots_on_disk
-                System.disk_space_free / self.class.disk
+                System.disk_space_free / self.class._slotz_disk
             end
 
             def available_slots_in_memory
-                System.memory_free / self.class.memory
+                System.memory_free / self.class._slotz_memory
             end
         end
 
-        base.disk   = resources[:disk]
-        base.memory = resources[:memory]
+        base._slotz_disk   = resources[:disk]
+        base._slotz_memory = resources[:memory]
     end
     extend self
 
