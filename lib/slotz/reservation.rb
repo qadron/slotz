@@ -8,7 +8,7 @@ module Reservation
             self.class.attr_accessor :memory
             self.class.attr_accessor :cores
 
-            def initialize
+            def initialize(*)
                 super
                 Slotz.filter self.class
             end
