@@ -31,6 +31,8 @@ Gem::Specification.new do |s|
     # latest one.
     s.add_dependency 'bundler'
 
+    s.add_dependency 'base64'
+
     s.add_dependency 'concurrent-ruby'
     s.add_dependency 'vmstat',              '~> 2.3.1'
     s.add_dependency 'sys-proctable',       '~> 1.3.0'
