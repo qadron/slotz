@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
     # latest one.
     s.add_dependency 'bundler'
 
+    s.add_dependency 'ostruct'
     s.add_dependency 'base64'
 
     s.add_dependency 'concurrent-ruby'
