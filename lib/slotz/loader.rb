@@ -43,6 +43,10 @@ class Loader
     # @return   [Integer]
     #   PID of the process.
     def load( klass, executable, options = {} )
+        if !executable.is_a? String
+            fail "File path not a string: #{executable.inspect}"
+        end
+
         if !File.exist?( executable )
             fail "File does not exist: #{executable}"
         end
@@ -72,7 +76,10 @@ class Loader
         options[:ppid]   = Process.pid
         options[:tmpdir] = Dir.tmpdir
 
-        encoded_options = Base64.strict_encode64( Marshal.dump( options.merge( execute: true ) ) )
+        encoded_options = Base64.strict_encode64( Marshal.dump( options.merge(
+          execute:     true,
+          loaded_with: [klass.to_s, executable, options]
+        )))
         argv            = [executable, encoded_options]
 
         # It's very, **VERY** important that we use this argument format as
